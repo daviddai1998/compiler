@@ -250,7 +250,7 @@ def renameReg(ir, maxSR, irLen):
         # for each oprand O that OP defines
         cur = cur_IR.ir
         records.append(cur_IR)
-        if cur[R3] is not None and cur[OP] is not "store":
+        if cur[R3] is not None and cur[OP] != STORE:
             sr = cur[R3]
             if SRToVR[sr] is None:
                 SRToVR[sr] = VRname
@@ -262,7 +262,7 @@ def renameReg(ir, maxSR, irLen):
 
         if cur[R1] is not None:
             sr = cur[R1]
-            if not (cur[OP] == "loadI" or cur[OP] == "output"):
+            if not (cur[OP] == LOADI or cur[OP] == OUTPUT):
                 # print(cur[OP])
                 if SRToVR[sr] is None:
                     SRToVR[sr] = VRname
@@ -278,7 +278,7 @@ def renameReg(ir, maxSR, irLen):
             cur[VR2] = SRToVR[sr]
             cur[NU2] = lu[sr]
             lu[sr] = irLen
-        if cur[R3] is not None and cur[OP] == "store":
+        if cur[R3] is not None and cur[OP] == STORE:
             sr = cur[R3]
             if not SRToVR[sr]:
                 SRToVR[sr] = VRname
@@ -382,8 +382,8 @@ class Allocator:
     def allocation(self, record):
         ir = record.ir
         opcode = ir[OP]
-        if opcode == "lshift" or opcode == "rshift" \
-                or opcode == "add" or opcode == "sub" or opcode == "mult":
+        if opcode == LSHIFT or opcode == RSHIFT \
+                or opcode == ADD or opcode == SUB or opcode == MULT:
             if self.VRToPR[ir[VR1]] is None:
                 ir[PR1] = self.getAPR(ir[VR1], ir[NU1])
             else:
@@ -411,7 +411,7 @@ class Allocator:
                 self.freeAPR(ir[PR3])
                 self.stack.insert(0, ir[PR3])
 
-        elif opcode == "loadI":
+        elif opcode == LOADI:
             # need to re-materialize
             self.VRToVal[ir[VR3]] = ir[R1]
             self.clean[ir[VR3]] = True
@@ -421,7 +421,7 @@ class Allocator:
                 self.freeAPR(ir[PR3])
                 self.stack.insert(0, ir[PR3])
 
-        elif opcode == "load":
+        elif opcode == LOAD:
             if self.VRToPR[ir[VR1]] is None:
                 ir[PR1] = self.getAPR(ir[VR1], ir[NU1])
             else:
@@ -441,7 +441,7 @@ class Allocator:
                 # print(ir[PR3])
                 self.stack.insert(0, ir[PR3])
 
-        elif opcode == "store":
+        elif opcode == STORE:
             if self.VRToPR[ir[VR1]] is None:
                 ir[PR1] = self.getAPR(ir[VR1], ir[NU1])
             else:
@@ -464,14 +464,14 @@ class Allocator:
                 self.freeAPR(ir[PR3])
                 self.stack.insert(0, ir[PR3])
         
-        if ir[0] == "output":
-            sys.stdout.write("%s %d\n" % (ir[OP], ir[R1]))
-        elif ir[0] == "loadI":
-            sys.stdout.write("%s %d => r%d\n" % (ir[OP], ir[R1], ir[PR3]))
-        elif ir[0] == "nop":
-            sys.stdout.write("%s \n" % (ir[OP]))
-        elif ir[0] == "load" or ir[0] == "store":
-            sys.stdout.write("%s r%d => r%d\n" % (ir[OP], ir[PR1], ir[PR3]))
-        elif ir[0] == "lshift" or ir[0] == "rshift" \
-                or ir[0] == "add" or ir[0] == "sub" or ir[0] == "mult":
-            sys.stdout.write("%s r%d, r%d => r%d\n" % (ir[OP], ir[PR1], ir[PR2], ir[PR3]))
+        if ir[0] == OUTPUT:
+            sys.stdout.write("%s %d\n" % (instructions[ir[OP]], ir[R1]))
+        elif ir[0] == LOADI:
+            sys.stdout.write("%s %d => r%d\n" % (instructions[ir[OP]], ir[R1], ir[PR3]))
+        elif ir[0] == NOP:
+            sys.stdout.write("%s \n" % (instructions[ir[OP]]))
+        elif ir[0] == LOAD or ir[0] == STORE:
+            sys.stdout.write("%s r%d => r%d\n" % (instructions[ir[OP]], ir[PR1], ir[PR3]))
+        elif ir[0] == LSHIFT or ir[0] == RSHIFT \
+                or ir[0] == ADD or ir[0] == SUB or ir[0] == MULT:
+            sys.stdout.write("%s r%d, r%d => r%d\n" % (instructions[ir[OP]], ir[PR1], ir[PR2], ir[PR3]))

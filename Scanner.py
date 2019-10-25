@@ -13,6 +13,30 @@ types = [
     'ENDFILE'
 ]
 
+instructions = [
+    "load",     # 0
+    "store",    # 1
+    "loadI",    # 2
+    "add",      # 3
+    "sub",      # 4
+    "mult",     # 5
+    "lshift",   # 6
+    "rshift",   # 7
+    "output",   # 8
+    "nop"       # 9
+]
+
+LOAD = 0
+STORE = 1
+LOADI = 2
+ADD = 3
+SUB = 4
+MULT = 5
+LSHIFT = 6
+RSHIFT = 7
+OUTPUT = 8
+NOP = 9
+
 NUMBERS = '01234856789'
 
 MEMOP_TYPE = 0
@@ -126,14 +150,14 @@ class Scanner:
                 if self.check_remaining("ore"):
                     if self.check_whitespace():
                         self.word = ""
-                        return self.line, "store", MEMOP_TYPE
+                        return self.line, STORE, MEMOP_TYPE
                     else:
                         self.whitespace_err()
             elif next1 == 'u':
                 if self.check_remaining("b"):
                     if self.check_whitespace():
                         self.word = ""
-                        return self.line, "sub", ARITHOP_TYPE
+                        return self.line, SUB, ARITHOP_TYPE
                     else:
                         self.whitespace_err()
             else:
@@ -150,19 +174,19 @@ class Scanner:
                         if isLoadI:
                             if self.check_whitespace():
                                 self.word = ""
-                                return self.line, "loadI", LOADI_TYPE
+                                return self.line, LOADI, LOADI_TYPE
                             else:
                                 self.whitespace_err()
                         elif self.word[-1] == ' ':
                             self.word = ""
-                            return self.line, "load", MEMOP_TYPE
+                            return self.line, LOAD, MEMOP_TYPE
                         else:
                             self.whitespace_err()
                 elif next1 == 's':
                     if self.check_remaining("hift"):
                         if self.check_whitespace():
                             self.word = ""
-                            return self.line, "lshift", ARITHOP_TYPE
+                            return self.line, LSHIFT, ARITHOP_TYPE
                         else:
                             self.whitespace_err()
             else:
@@ -175,7 +199,7 @@ class Scanner:
                 if self.check_remaining("hift"):
                     if self.check_whitespace():
                         self.word = ""
-                        return self.line, "rshift", ARITHOP_TYPE
+                        return self.line, RSHIFT, ARITHOP_TYPE
                     else:
                         self.whitespace_err()
 
@@ -189,7 +213,7 @@ class Scanner:
             if self.check_remaining("ult"):
                 if self.check_whitespace():
                     self.word = ""
-                    return self.line, "mult", ARITHOP_TYPE
+                    return self.line, MULT, ARITHOP_TYPE
                 else:
                     self.whitespace_err()
 
@@ -197,7 +221,7 @@ class Scanner:
             if self.check_remaining("dd"):
                 if self.check_whitespace():
                     self.word = ""
-                    return self.line, "add", ARITHOP_TYPE
+                    return self.line, ADD, ARITHOP_TYPE
                 else:
                     self.whitespace_err()
 
@@ -205,7 +229,7 @@ class Scanner:
             if self.check_remaining("op"):
                 if self.check_whitespace():
                     self.word = ""
-                    return self.line, "nop", NOP_TYPE
+                    return self.line, NOP, NOP_TYPE
                 else:
                     self.whitespace_err()
 
@@ -213,7 +237,7 @@ class Scanner:
             if self.check_remaining("utput"):
                 if self.check_whitespace():
                     self.word = ""
-                    return self.line, "output", OUTPUT_TYPE
+                    return self.line, OUTPUT, OUTPUT_TYPE
                 else:
                     self.whitespace_err()
 
@@ -312,9 +336,9 @@ def token_str(token):
     string = ""
     if token[2] in [MEMOP_TYPE, LOADI_TYPE, ARITHOP_TYPE, OUTPUT_TYPE, NOP_TYPE]:
         # print(tok[1], tok[2])
-        string = token[1]
+        string = instructions[token[1]]
     elif token[2] == CONSTANT_TYPE:
-        string = str(token[1])
+        string = instructions[token[1]]
     elif token[2] == REGISTER_TYPE:
         string = "r" + str(token[1])
     elif token[2] == COMMA_TYPE:
