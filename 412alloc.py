@@ -12,13 +12,15 @@ def main():
         sys.stderr.write("ERROR: Please provide the flag and the filename.\n")
     else:
         flag = args[1]
-        if len(flag) == 1:
+        # print(str(flag) + "\n")
+        if flag == "-x":
+            filename = args[2]
+            rename(filename)
+        elif flag:
             k = int(flag)
             filename = args[2]
             allocate(filename, k)
-        elif flag[1] == "x":
-            filename = args[2]
-            rename(filename)
+
 
 
 def rename(file):
