@@ -65,8 +65,8 @@ def main():
                         sys.stderr.write("Flag given is invalid.\n" + help_message)
 
 
-def parse(file):
-    f = ReadFile(file)
+def parse(fn):
+    f = ReadFile(fn)
     scanner = Scanner(f)
     ir = IntermediateRepresentation()
     parser = Parser(scanner, ir)
@@ -87,8 +87,8 @@ def parse(file):
         sys.stdout.write(string.format(count))
 
 
-def scan(file):
-    f = ReadFile(file)
+def scan(fn):
+    f = ReadFile(fn)
     scanner = Scanner(f)
     while True:
         token_data = scanner.next_token()
@@ -100,9 +100,9 @@ def scan(file):
                 break
 
 
-def read(file):
+def read(fn):
     # filename = sys.argv[1]
-    f = ReadFile(file)
+    f = ReadFile(fn)
     scanner = Scanner(f)
     ir = IntermediateRepresentation()
     parser = Parser(scanner, ir)
@@ -132,8 +132,8 @@ def read(file):
         #     head = head.prev
 
 
-def rename(file):
-    f = ReadFile(file)
+def rename(fn):
+    f = ReadFile(fn)
     scanner = Scanner(f)
     ir = IntermediateRepresentation()
     parser = Parser(scanner, ir)

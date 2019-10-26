@@ -22,8 +22,8 @@ def main():
             allocate(filename, k)
 
 
-def rename(file):
-    f = ReadFile(file)
+def rename(fn):
+    f = ReadFile(fn)
     scanner = Scanner(f)
     ir = IntermediateRepresentation()
     parser = Parser(scanner, ir)
@@ -55,8 +55,8 @@ def rename(file):
         head = head.prev
 
 
-def allocate(file, k):
-    f = ReadFile(file)
+def allocate(fn, k):
+    f = ReadFile(fn)
     scanner = Scanner(f)
     ir = IntermediateRepresentation()
     parser = Parser(scanner, ir)
