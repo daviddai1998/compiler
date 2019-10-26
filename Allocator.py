@@ -41,7 +41,7 @@ class Allocator:
 
         if self.rematerial[vr] is not None:
             loadI_ir = self.rematerial[vr]
-            sys.stdout.write("loadI {} => r{} \n".format(loadI_ir[R1], pr))
+            sys.stdout.write("loadI {} => r{} // rematerial\n".format(loadI_ir[R1], pr))
 
         self.VRToPR[vr] = pr
         self.PRToVR[pr] = vr
@@ -69,7 +69,7 @@ class Allocator:
         spill_vr = self.PRToVR[spill_pr]
 
         # if the vr is dirty, just print out for now
-        if self.rematerial[spill_vr] is None or not self.clean[spill_vr]:
+        if self.rematerial[spill_vr] is None:
             # spill_vr type may not be correct
             self.VRToMem[spill_vr] = self.memory_alloc
             # sys.stdout.write("// spill\n")
@@ -129,7 +129,7 @@ class Allocator:
 
         elif opcode == LOADI:
             # need to re-materialize
-            self.rematerial[VR3] = ir
+            self.rematerial[ir[VR3]] = ir
             self.VRToVal[ir[VR3]] = ir[R1]
 
         elif opcode == LOAD:
