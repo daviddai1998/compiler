@@ -69,13 +69,14 @@ class Allocator:
         spill_vr = self.PRToVR[spill_pr]
 
         # if the vr is dirty, just print out for now
-        if not self.clean[spill_vr] or self.rematerial[spill_vr] is None:
+        if self.rematerial[spill_vr] is None or not self.clean[spill_vr]:
             # spill_vr type may not be correct
             self.VRToMem[spill_vr] = self.memory_alloc
             # sys.stdout.write("// spill\n")
             sys.stdout.write('loadI %d => r%d \n' % (self.memory_alloc, len(self.PRToVR)))
             sys.stdout.write('store r%d => r%d \n' % (spill_pr, len(self.PRToVR)))
             # sys.stdout.write("// spill finished\n")
+            self.clean[spill_vr] = True
             self.memory_alloc += 4
 
         self.VRToPR[spill_vr] = None
@@ -83,16 +84,20 @@ class Allocator:
         return spill_pr
 
     def restore(self, vr, pr):
-        if self.spilled[vr] and not self.clean[vr]:
-            # sys.stdout.write("// restore\n")
+        # if self.spilled[vr] and not self.clean[vr]:
+        #     # sys.stdout.write("// restore\n")
+        #     sys.stdout.write('loadI %d => r%d\n' % (self.VRToMem[vr], pr))
+        #     sys.stdout.write('load r%d => r%d\n' % (pr, pr))
+        #     # sys.stdout.write("// restore finished\n")
+        # elif self.spilled[vr] and self.clean[vr]:
+        #     # sys.stdout.write("// restore\n")
+        #     sys.stdout.write('loadI %d => r%d\n' % (self.VRToVal[vr], pr))
+        #     # sys.stdout.write("// restore finished\n")
+        # self.spilled[vr] = False
+
+        if self.spilled[vr] and self.rematerial[vr] is None:
             sys.stdout.write('loadI %d => r%d\n' % (self.VRToMem[vr], pr))
             sys.stdout.write('load r%d => r%d\n' % (pr, pr))
-            # sys.stdout.write("// restore finished\n")
-        elif self.spilled[vr] and self.clean[vr]:
-            # sys.stdout.write("// restore\n")
-            sys.stdout.write('loadI %d => r%d\n' % (self.VRToVal[vr], pr))
-            # sys.stdout.write("// restore finished\n")
-        self.spilled[vr] = False
 
     def allocation(self, record):
         ir = record.ir
