@@ -5,6 +5,17 @@ from Allocator import *
 from Parser import *
 args = sys.argv
 
+help_message = "COMP 412, Fall 2018 Front End (lab 2)\n" + \
+               "Command Syntax:\n" + \
+               "	./421alloc [flags] filename\n" + \
+               "Required arguments:\n" + \
+               "	filename  is the pathname (absolute or relative) to the input file\n" + \
+               "Optional flags:" + \
+               "	-h	 prints this message\n" + \
+               "	-x	 rename the registers\n" + \
+               "	k    This command will be used to invoke register allocation " \
+               "for k registers on the input block contained in <file name>. For lab2, 3 <= k <= 64\n"
+
 
 def main():
     # flags = set()
@@ -16,6 +27,8 @@ def main():
         if flag == "-x":
             filename = args[2]
             rename(filename)
+        elif flag == "-h":
+            sys.stderr.write(help_message)
         elif flag:
             k = int(flag)
             filename = args[2]
