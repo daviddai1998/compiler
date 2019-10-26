@@ -185,8 +185,6 @@ class Allocator:
 
         if ir[0] == OUTPUT:
             sys.stdout.write("%s %d\n" % (instructions[ir[OP]], ir[R1]))
-        elif ir[0] == LOADI:
-            sys.stdout.write("%s %d => r%d\n" % (instructions[ir[OP]], ir[R1], ir[PR3]))
         elif ir[0] == NOP:
             sys.stdout.write("%s \n" % (instructions[ir[OP]]))
         elif ir[0] == LOAD or ir[0] == STORE:
