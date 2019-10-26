@@ -19,6 +19,7 @@ def main():
         elif flag:
             k = int(flag)
             filename = args[2]
+            rename(filename)
             allocate(filename, k)
 
 
