@@ -39,9 +39,9 @@ class Allocator:
         else:
             pr = self.spill()
 
-        if self.rematerial[vr] is not None:
-            loadI_ir = self.rematerial[vr]
-            sys.stdout.write("loadI {} => r{} \n".format(loadI_ir.ir[R1], pr))
+        # if self.rematerial[vr] is not None:
+        #     loadI_ir = self.rematerial[vr]
+        #     sys.stdout.write("loadI {} => r{} \n".format(loadI_ir.ir[R1], pr))
 
         self.VRToPR[vr] = pr
         self.PRToVR[pr] = vr
