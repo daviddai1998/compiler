@@ -1,6 +1,7 @@
 import sys
 import os.path
 from Scanner import *
+from Allocator import *
 from Parser import *
 args = sys.argv
 
