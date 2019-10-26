@@ -23,7 +23,6 @@ def main():
             allocate(filename, k)
 
 
-
 def rename(file):
     f = ReadFile(file)
     scanner = Scanner(f)
