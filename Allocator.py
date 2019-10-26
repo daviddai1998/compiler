@@ -69,8 +69,8 @@ class Allocator:
         spill_vr = self.PRToVR[spill_pr]
 
         # if the vr is dirty, just print out for now
-        if self.rematerial[spill_vr] is None or not self.clean[spill_vr]:
-            # spill_vr type may not be correct
+        if self.rematerial[spill_vr] is None and not self.clean[spill_vr]:
+            # spill_vr type may not be correctsss
             self.VRToMem[spill_vr] = self.memory_alloc
             # sys.stdout.write("// spill\n")
             sys.stdout.write('loadI %d => r%d \n' % (self.memory_alloc, len(self.PRToVR)))
