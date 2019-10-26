@@ -84,17 +84,6 @@ class Allocator:
         return spill_pr
 
     def restore(self, vr, pr):
-        # if self.spilled[vr] and not self.clean[vr]:
-        #     # sys.stdout.write("// restore\n")
-        #     sys.stdout.write('loadI %d => r%d\n' % (self.VRToMem[vr], pr))
-        #     sys.stdout.write('load r%d => r%d\n' % (pr, pr))
-        #     # sys.stdout.write("// restore finished\n")
-        # elif self.spilled[vr] and self.clean[vr]:
-        #     # sys.stdout.write("// restore\n")
-        #     sys.stdout.write('loadI %d => r%d\n' % (self.VRToVal[vr], pr))
-        #     # sys.stdout.write("// restore finished\n")
-        # self.spilled[vr] = False
-
         if self.spilled[vr] and self.rematerial[vr] is None:
             sys.stdout.write('loadI %d => r%d\n' % (self.VRToMem[vr], pr))
             sys.stdout.write('load r%d => r%d\n' % (pr, pr))
@@ -104,6 +93,20 @@ class Allocator:
         opcode = ir[OP]
         if opcode == LSHIFT or opcode == RSHIFT \
                 or opcode == ADD or opcode == SUB or opcode == MULT:
+            if self.VRToVal[ir[VR1]] is None or self.VRToVal[ir[VR2]] is None:
+                self.VRToVal[ir[VR3]] = None
+            else:
+                if opcode == ADD:
+                    self.VRToVal[ir[VR3]] = self.VRToVal[ir[VR1]] + self.VRToVal[ir[VR2]]
+                elif opcode == SUB:
+                    self.VRToVal[ir[VR3]] = self.VRToVal[ir[VR1]] - self.VRToVal[ir[VR2]]
+                elif opcode == MULT:
+                    self.VRToVal[ir[VR3]] = self.VRToVal[ir[VR1]] * self.VRToVal[ir[VR2]]
+                elif opcode == LSHIFT:
+                    self.VRToVal[ir[VR3]] = self.VRToVal[ir[VR1]] << self.VRToVal[ir[VR2]]
+                elif opcode == RSHIFT:
+                    self.VRToVal[ir[VR3]] = self.VRToVal[ir[VR1]] >> self.VRToVal[ir[VR2]]
+
             if self.VRToPR[ir[VR1]] is None:
                 ir[PR1] = self.getAPR(ir[VR1], ir[NU1])
             else:

@@ -249,6 +249,7 @@ def renameReg(ir, maxSR, irLen):
     while cur_IR:
         # for each oprand O that OP defines
         cur = cur_IR.ir
+        cur[IDX] = irLen
         records.append(cur_IR)
         if cur[R3] is not None and cur[OP] != STORE:
             sr = cur[R3]
