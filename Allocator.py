@@ -84,20 +84,12 @@ class Allocator:
         return spill_pr
 
     def restore(self, vr, pr):
-        # if self.spilled[vr] and not self.clean[vr]:
-        #     # sys.stdout.write("// restore\n")
-        #     sys.stdout.write('loadI %d => r%d\n' % (self.VRToMem[vr], pr))
-        #     sys.stdout.write('load r%d => r%d\n' % (pr, pr))
-        #     # sys.stdout.write("// restore finished\n")
-        # elif self.spilled[vr] and self.clean[vr]:
-        #     # sys.stdout.write("// restore\n")
-        #     sys.stdout.write('loadI %d => r%d\n' % (self.VRToVal[vr], pr))
-        #     # sys.stdout.write("// restore finished\n")
-        # self.spilled[vr] = False
-
-        if self.spilled[vr] and self.rematerial[vr] is None:
-            sys.stdout.write('loadI %d => r%d\n' % (self.VRToMem[vr], pr))
-            sys.stdout.write('load r%d => r%d\n' % (pr, pr))
+        if self.rematerial[vr] is None:
+            if self.spilled[vr] and not self.clean[vr]:
+                # sys.stdout.write("// restore\n")
+                sys.stdout.write('loadI %d => r%d\n' % (self.VRToMem[vr], pr))
+                sys.stdout.write('load r%d => r%d\n' % (pr, pr))
+                # sys.stdout.write("// restore finished\n")
 
     def allocation(self, record):
         ir = record.ir
