@@ -38,13 +38,6 @@ class Allocator:
             pr = self.stack.pop(0)
         else:
             pr = self.spill()
-            # clean_pr, clean_nu = self.max_cleanNU()
-            # rematerial_pr, remterial_nu = self.max_rematerialNU()
-            # if nu - max(clean_nu, remterial_nu) <= 5:
-            #     if clean_nu - remterial_nu <= 3:
-            #         pr = rematerial_pr
-            #     else:
-            #         pr = clean_pr
 
         if self.rematerial[vr] is not None:
             loadI_ir = self.rematerial[vr]
@@ -62,44 +55,18 @@ class Allocator:
         self.PRToVR[pr] = None
         self.PRNU[pr] = float("inf")
 
-    def max_cleanNU(self):
-        clean_pr = -1
-        max_nu = -1
-        for vr in range(self.maxVR):
-            if self.clean[vr] is True:
-                pr = self.VRToPR[vr]
-                if pr:
-                    if pr == self.mark:
-                        continue
-                    if self.PRNU[pr] > max_nu and self.PRNU[pr] != float("inf"):
-                        max_nu = self.PRNU[pr]
-                        clean_pr = pr
-        return clean_pr, max_nu
-
-    def max_rematerialNU(self):
-        rematerial_pr = -1
-        max_nu = -1
-        for vr in range(self.maxVR):
-            if self.rematerial[vr] is not None:
-                pr = self.VRToPR[vr]
-                if pr:
-                    if pr == self.mark:
-                        continue
-                    if self.PRNU[pr] > max_nu and self.PRNU[pr] != float("inf"):
-                        max_nu = self.PRNU[pr]
-                        rematerial_pr = pr
-        return rematerial_pr, max_nu
-
     def spill(self):
-        spill_pr = -1
-        max_nu = -1
-        for pr in range(self.maxPR):
-            # print(pr, nu)
-            if pr == self.mark:
-                continue
-            if self.PRNU[pr] > max_nu and self.PRNU[pr] != float("inf"):
-                max_nu = self.PRNU[pr]
-                spill_pr = pr
+        # spill_pr = -1
+        # max_nu = -1
+        # for pr in range(self.maxPR):
+        #     # print(pr, nu)
+        #     if pr == self.mark:
+        #         continue
+        #     if self.PRNU[pr] > max_nu and self.PRNU[pr] != float("inf"):
+        #         max_nu = self.PRNU[pr]
+        #         spill_pr = pr
+
+        spill_pr = self.selectPR()
 
         spill_vr = self.PRToVR[spill_pr]
 
@@ -118,11 +85,30 @@ class Allocator:
         self.spilled[spill_vr] = True
         return spill_pr
 
+    def selectPR(self):
+        pr_rematerial = []
+        pr_clean = []
+        pr_dirty = []
+        for pr in range(self.maxPR):
+            if pr == self.mark:
+                continue
+            if self.PRNU[pr] != float("inf"):
+                if self.rematerial[self.PRToVR[pr]] is not None:
+                    pr_rematerial.append((self.PRNU[pr], pr))
+                elif self.clean[self.PRToVR[pr]]:
+                    pr_clean.append((self.PRNU[pr] - 3, pr))
+                else:
+                    pr_dirty.append((self.PRNU[pr] - 5, pr))
+
+        best_pr = max(max(pr_rematerial), max(pr_clean), max(pr_dirty))[1]
+        return best_pr
+
+
     def restore(self, vr, pr):
         if self.spilled[vr] and self.rematerial[vr] is None:
             sys.stdout.write('loadI %d => r%d\n' % (self.VRToMem[vr], pr))
             sys.stdout.write('load r%d => r%d\n' % (pr, pr))
-        self.spilled[vr] = False
+            self.spilled[vr] = False
 
     def allocation(self, record):
         ir = record.ir
