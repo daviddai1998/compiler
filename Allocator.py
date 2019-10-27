@@ -40,8 +40,8 @@ class Allocator:
             pr = self.spill()
             clean_pr, clean_nu = self.max_cleanNU()
             rematerial_pr, remterial_nu = self.max_rematerialNU()
-            if nu - max(clean_nu, remterial_nu) < 5:
-                if clean_nu - remterial_nu < 3:
+            if nu - max(clean_nu, remterial_nu) <= 5:
+                if clean_nu - remterial_nu <= 3:
                     pr = rematerial_pr
                 else:
                     pr = clean_pr
