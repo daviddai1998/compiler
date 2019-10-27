@@ -1,0 +1,21 @@
+//NAME: David Dai
+//NETID: wd16
+
+COMP412 Lab2
+
+Usage:
+Command Syntax:
+	./412alloc [flags] filename
+
+Required arguments:
+	filename is the pathname (absolute or relative) to the input file
+
+flags:
+	-h	 prints this message
+	-x   The –x flag will be used for Lab2CodeCheck1. When a –x flag is detected, 
+		 412alloc must perform register renaming, not register allocation, 
+		 on the input block contained in <file name>.
+	k	 This command will be used to invoke register allocation for k registers 
+		 on the input block contained in <file name>.
+		 k is an integer that specifies the number of registers. 
+		 For Lab 2, 3 ≤ k ≤ 64.
