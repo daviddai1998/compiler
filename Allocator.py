@@ -100,9 +100,9 @@ class Allocator:
                 else:
                     pr_dirty.append((self.PRNU[pr] - 5, pr))
 
-        best_re = max(pr_rematerial) if pr_rematerial else -1
-        best_clean = max(pr_clean) if pr_clean else -1
-        best_dirty = max(pr_dirty) if pr_dirty else -1
+        best_re = max(pr_rematerial) if pr_rematerial else (-1, -1)
+        best_clean = max(pr_clean) if pr_clean else (-1, -1)
+        best_dirty = max(pr_dirty) if pr_dirty else (-1, -1)
 
         best_pr = max(best_re, best_clean, best_dirty)[1]
         return best_pr
