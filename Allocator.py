@@ -111,7 +111,7 @@ class Allocator:
         if self.spilled[vr] and self.rematerial[vr] is None:
             sys.stdout.write('loadI %d => r%d\n' % (self.VRToMem[vr], pr))
             sys.stdout.write('load r%d => r%d\n' % (pr, pr))
-            self.spilled[vr] = False
+        self.spilled[vr] = False
 
     def allocation(self, record):
         ir = record.ir
