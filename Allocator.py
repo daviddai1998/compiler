@@ -96,7 +96,7 @@ class Allocator:
                 if self.rematerial[self.PRToVR[pr]] is not None:
                     pr_rematerial.append((self.PRNU[pr], pr))
                 elif self.clean[self.PRToVR[pr]]:
-                    pr_clean.append((self.PRNU[pr] - 1, pr))
+                    pr_clean.append((self.PRNU[pr] - 3, pr))
                 else:
                     pr_dirty.append((self.PRNU[pr] - 5, pr))
 
