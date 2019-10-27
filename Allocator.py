@@ -207,7 +207,6 @@ class Allocator:
 
             self.mark = None
             self.rematerial[ir[VR3]] = None
-            self.clean[ir[VR3]] = False
 
             if ir[NU1] == float("inf"):
                 self.freeAPR(ir[PR1])
