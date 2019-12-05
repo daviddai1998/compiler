@@ -1,6 +1,32 @@
 from Allocator import *
 from Parser import *
 from Scheduler import *
+import sys
+args = sys.argv
+
+
+help_message = "COMP 412, Fall 2018 Front End (lab 3)\n" + \
+               "Command Syntax:\n" + \
+               "	./421alloc [flags] filename\n" + \
+               "Required arguments:\n" + \
+               "	filename  is the pathname (absolute or relative) to the input file\n" + \
+               "Optional flags:" + \
+               "	-h	 prints this message\n" + \
+               "for k registers on the input block contained in <file name>. For lab2, 3 <= k <= 64\n"
+
+
+def main():
+    # flags = set()
+    if len(args) <= 1:
+        sys.stderr.write("ERROR: Please provide the flag and the filename.\n")
+    else:
+        flag = args[1]
+        # print(str(flag) + "\n")
+        if flag == "-h":
+            sys.stderr.write(help_message)
+        elif flag:
+            filename = flag
+            schedule(filename)
 
 
 def get_print(op, ir):
@@ -19,8 +45,8 @@ def get_print(op, ir):
     return out
 
 
-def schedule():
-    f = ReadFile("test.i")
+def schedule(filename):
+    f = ReadFile(filename)
     scanner = Scanner(f)
     ir = IntermediateRepresentation()
     parser = Parser(scanner, ir)
@@ -47,4 +73,4 @@ def schedule():
 
 
 if __name__ == '__main__':
-    schedule()
+    main()
