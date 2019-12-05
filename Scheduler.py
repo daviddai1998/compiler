@@ -176,10 +176,10 @@ class Scheduler:
             # print(self.ready)
             # print(type(self.ready))
             node = heapq.heappop(self.ready)
-            print("--is exist--")
+            # print("--is exist--")
             # print(node[1])
             opcode = node[1][1]
-            print("line: ", node[1][0], instructions[opcode])
+            # print("line: ", node[1][0], instructions[opcode])
             if opcode in f:
                 if opcode == OUTPUT and num_out > 0:
                     heapq.heappush(ops, node)
@@ -195,7 +195,8 @@ class Scheduler:
     def instruction_schedule(self):
         cycle = 1
         S = {}
-        schedule = [[], []]
+        schedule = []
+        debug = [[], []]
         # units = [{LOAD, STORE, LOADI, MULT, SUB, ADD, LSHIFT, RSHIFT, OUTPUT}]
         units = [{LOAD, STORE, LOADI, SUB, ADD, LSHIFT, RSHIFT, OUTPUT},
                  {LOADI, MULT, SUB, ADD, LSHIFT, RSHIFT, OUTPUT}]
@@ -210,10 +211,11 @@ class Scheduler:
             self.dependency.pop(r)
 
         while len(self.ready) > 0 or len(self.active) > 0:
-            print("------------CYCLE {}--------------".format(cycle))
-            print("Ready:", self.ready, "Active:", self.active)
-            print("-----debug1-----")
+            # print("------------CYCLE {}--------------".format(cycle))
+            # print("Ready:", self.ready, "Active:", self.active)
+            # print("-----debug1-----")
             num_output = 0
+            op_pair = []
             for i in range(2):
                 # the operation class
                 flag = False
@@ -227,45 +229,48 @@ class Scheduler:
                     if op not in self.active:
                         self.active.append(op)
                         flag = True
-                        schedule[i].append((op[0], op[1]))
+                        op_pair.append((op[0], op[1]))
+                        debug[i].append((op[0], op[1]))
                 if not flag:
-                    schedule[i].append((-1, -1))
+                    op_pair.append((-1, -1))
+                    debug[i].append((-1, -1))
+            schedule.append(tuple(op_pair))
             cycle += 1
 
-            print("-----active-----")
-            print(self.active, "Cycle:", cycle)
+            # print("-----active-----")
+            # print(self.active, "Cycle:", cycle)
             new_active = copy.deepcopy(self.active)
             for idx in range(len(self.active)):
                 op = self.active[idx]
 
-                print("-----S[{}]-----".format(instructions[op[1]]))
-                print("S[", op[0], "]: ", S[op[0]], "latency: ", self.latency[op[1]])
+                # print("-----S[{}]-----".format(instructions[op[1]]))
+                # print("S[", op[0], "]: ", S[op[0]], "latency: ", self.latency[op[1]])
                 if S[op[0]] + self.latency[op[1]] <= cycle:
-                    print("-----first-----")
+                    # print("-------first-------")
                     new_active.remove(op)
                     for successor in self.reverse[op[0]]:
                         if op[0] in self.dependency[successor]:
                             self.dependency[successor].remove(op[0])
                         if not self.dependency[successor]:
-                            print("-----successor-----")
-                            print(successor)
+                            # print("-----successor-----")
+                            # print(successor)
                             self.dependency.pop(successor)
                             s_opcode = self.IR[successor - 1].ir[OP]
                             heapq.heappush(self.ready, (-self.priority[successor], (successor, s_opcode)))
                     self.reverse.pop(op[0])
 
                 if (op[1] == LOAD or op[1] == STORE) and S[op[0]] == cycle - 1:
-                    print("-----second-----")
+                    # print("-------second-------")
                     for successor in self.reverse[op[0]]:
-                        if op[0] in self.dependency[successor]:
+                        # print("-----successor-----")
+                        # print(successor)
+                        # print(self.dependency[successor])
+                        s_opcode = self.IR[successor - 1].ir[OP]
+                        if s_opcode == STORE and op[0] in self.dependency[successor] \
+                                and len(self.dependency[successor]) == 1:
                             self.dependency[successor].remove(op[0])
-                        if not self.dependency[successor]:
-                            print("-----successor-----")
-                            print(successor)
-                            s_opcode = self.IR[successor - 1].ir[OP]
-                            if s_opcode == STORE:
-                                self.dependency.pop(successor)
-                                heapq.heappush(self.ready, (-self.priority[successor], (successor, s_opcode)))
+                            self.dependency.pop(successor)
+                            heapq.heappush(self.ready, (-self.priority[successor], (successor, s_opcode)))
 
             self.active = new_active
-        return schedule
+        return schedule, debug
