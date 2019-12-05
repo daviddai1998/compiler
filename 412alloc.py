@@ -54,17 +54,17 @@ def rename(fn):
 
     while head.prev:
         curIR = head.ir
-        if curIR[0] == "output":
-            sys.stdout.write("%s %d\n" % (curIR[OP], curIR[R1]))
-        elif curIR[0] == "loadI":
-            sys.stdout.write("%s %d => r%d\n" % (curIR[OP], curIR[R1], curIR[VR3]))
-        elif curIR[0] == "nop":
-            sys.stdout.write("%s \n" % (curIR[OP]))
-        elif curIR[0] == "load" or curIR[0] == "store":
-            sys.stdout.write("%s r%d => r%d\n" % (curIR[OP], curIR[VR1], curIR[VR3]))
-        elif curIR[0] == "lshift" or curIR[0] == "rshift" \
-                or curIR[0] == "add" or curIR[0] == "sub" or curIR[0] == "mult":
-            sys.stdout.write("%s r%d, r%d => r%d\n" % (curIR[OP], curIR[VR1], curIR[VR2], curIR[VR3]))
+        if curIR[0] == OUTPUT:
+            sys.stdout.write("%s %d\n" % (instructions[curIR[OP]], curIR[R1]))
+        elif curIR[0] == LOADI:
+            sys.stdout.write("%s %d => r%d\n" % (instructions[curIR[OP]], curIR[R1], curIR[VR3]))
+        elif curIR[0] == NOP:
+            sys.stdout.write("%s \n" % (instructions[curIR[OP]]))
+        elif curIR[0] == LOAD or curIR[0] == STORE:
+            sys.stdout.write("%s r%d => r%d\n" % (instructions[curIR[OP]], curIR[VR1], curIR[VR3]))
+        elif curIR[0] == LSHIFT or curIR[0] == RSHIFT \
+                or curIR[0] == ADD or curIR[0] == SUB or curIR[0] == MULT:
+            sys.stdout.write("%s r%d, r%d => r%d\n" % (instructions[curIR[OP]], curIR[VR1], curIR[VR2], curIR[VR3]))
         head = head.prev
 
 
