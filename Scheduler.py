@@ -161,7 +161,7 @@ class Scheduler:
                     if lo not in self.dependency[node[1]]:
                         self.dependency[node[1]].add(lo)
                         self.reverse[lo].add(node[1])
-                        # break
+                        break
 
             # store seialization edges to the most recent store and output, and all previous load
             if opcode == STORE:
