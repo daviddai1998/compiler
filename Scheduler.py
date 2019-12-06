@@ -259,7 +259,7 @@ class Scheduler:
                             # print(successor)
                             self.dependency.pop(successor)
                             s_opcode = self.IR[successor - 1].ir[OP]
-                            heapq.heappush(self.ready, (-(1 * self.priority[successor] + 1 * self.second[successor]),
+                            heapq.heappush(self.ready, (-(0.3 * self.priority[successor] + 2 * self.second[successor]),
                                                         (successor, s_opcode)))
                     self.reverse.pop(op[0])
 
