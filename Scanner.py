@@ -177,7 +177,7 @@ class Scanner:
                                 return self.line, LOADI, LOADI_TYPE
                             else:
                                 self.whitespace_err()
-                        elif self.word[-1] == ' ':
+                        elif self.word[-1] == ' ' or self.word[-1] == '\t':
                             self.word = ""
                             return self.line, LOAD, MEMOP_TYPE
                         else:
