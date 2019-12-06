@@ -116,7 +116,7 @@ class Scheduler:
             if opcode == OUTPUT:
                 if last_store is not None:
                     outval = ir[R1]
-                    if vr3 in VRToVal and int(VRToVal[vr3]) == int(outval):
+                    if vr3 in VRToVal and int(VRToVal[vr3]) != int(outval):
                         pass
                     else:
                         if last_store not in self.dependency[node[1]]:
@@ -127,7 +127,7 @@ class Scheduler:
             if opcode == LOAD:
                 if last_store is not None:
                     loadval = VRToVal[vr1] if vr1 in VRToVal else None
-                    if loadval is not None and vr3 in VRToVal and int(VRToVal[vr3]) == int(loadval):
+                    if loadval is not None and vr3 in VRToVal and int(VRToVal[vr3]) != int(loadval):
                         pass
                     else:
                         if last_store not in self.dependency[node[1]]:
