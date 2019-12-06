@@ -221,7 +221,7 @@ class Scheduler:
             if not self.dependency[k]:
                 opcode = self.IR[k - 1].ir[OP]
                 to_remove.append(k)
-                heapq.heappush(self.ready, (-(2 * self.priority[k] + 0.2 * self.second[k]), (k, opcode)))
+                heapq.heappush(self.ready, (-self.priority[k], (k, opcode)))
 
         for r in to_remove:
             self.dependency.pop(r)
@@ -272,7 +272,7 @@ class Scheduler:
                             # print(successor)
                             self.dependency.pop(successor)
                             s_opcode = self.IR[successor - 1].ir[OP]
-                            heapq.heappush(self.ready, (-(2 * self.priority[successor] + 0.2 * self.second[successor]),
+                            heapq.heappush(self.ready, (-self.priority[successor],
                                                         (successor, s_opcode)))
                     self.reverse.pop(op[0])
 
