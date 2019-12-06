@@ -116,18 +116,24 @@ class Scheduler:
             if opcode == OUTPUT:
                 if last_store is not None:
                     outval = ir[R1]
-                    # if vr3 in VRToVal and
-                    if last_store not in self.dependency[node[1]]:
-                        self.dependency[node[1]].add(last_store)
-                        self.reverse[last_store].add(node[1])
-                        # pri_graph[node[1]].add((last_store, False))
+                    if vr3 in VRToVal and int(VRToVal[vr3]) == int(outval):
+                        pass
+                    else:
+                        if last_store not in self.dependency[node[1]]:
+                            self.dependency[node[1]].add(last_store)
+                            self.reverse[last_store].add(node[1])
+                            # pri_graph[node[1]].add((last_store, False))
 
             if opcode == LOAD:
                 if last_store is not None:
-                    if last_store not in self.dependency[node[1]]:
-                        self.dependency[node[1]].add(last_store)
-                        self.reverse[last_store].add(node[1])
-                        # pri_graph[node[1]].add((last_store, False))
+                    loadval = VRToVal[vr1] if vr1 in VRToVal else None
+                    if loadval is not None and vr3 in VRToVal and int(VRToVal[vr3]) == int(loadval):
+                        pass
+                    else:
+                        if last_store not in self.dependency[node[1]]:
+                            self.dependency[node[1]].add(last_store)
+                            self.reverse[last_store].add(node[1])
+                            # pri_graph[node[1]].add((last_store, False))
 
             # output serialization edge to most recent output
             if opcode == OUTPUT:
