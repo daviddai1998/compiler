@@ -38,11 +38,11 @@ class Scheduler:
         M = {}
         # pri_graph = defaultdict(set)
         VRToVal = {}
-        last_store = None
-        last_output = None
+        # last_store = None
+        # last_output = None
 
-        # last_store = []
-        # last_output = []
+        last_store = []
+        last_output = []
         all_loads = []
 
         for i in range(len(self.IR)):
@@ -112,38 +112,87 @@ class Scheduler:
                         self.reverse[M[vr3][1]].add(node[1])
                         # pri_graph[node[1]].add((M[vr3][1], False))
 
-            # find store before output and load
+            # # find store before output and load
+            # if opcode == OUTPUT:
+            #     if last_store is not None:
+            #         if last_store not in self.dependency[node[1]]:
+            #             self.dependency[node[1]].add(last_store)
+            #             self.reverse[last_store].add(node[1])
+            #
+            # if opcode == LOAD:
+            #     if last_store is not None:
+            #         if last_store not in self.dependency[node[1]]:
+            #             self.dependency[node[1]].add(last_store)
+            #             self.reverse[last_store].add(node[1])
+            #
+            # # output serialization edge to most recent output
+            # if opcode == OUTPUT:
+            #     if last_output is not None:
+            #         if last_output not in self.dependency[node[1]]:
+            #             self.dependency[node[1]].add(last_output)
+            #             self.reverse[last_output].add(node[1])
+
             if opcode == OUTPUT:
-                if last_store is not None:
-                    if last_store not in self.dependency[node[1]]:
-                        self.dependency[node[1]].add(last_store)
-                        self.reverse[last_store].add(node[1])
+                output_val = ir[R1]
+                for ls in list(reversed(last_store)):
+                    cur_vr3 = self.IR[ls - 1].ir[VR3]
+                    if cur_vr3 in VRToVal and int(VRToVal[cur_vr3]) != int(output_val):
+                        continue
+                    if ls not in self.dependency[node[1]]:
+                        self.dependency[node[1]].add(ls)
+                        self.reverse[ls].add(node[1])
+                        break
 
             if opcode == LOAD:
-                if last_store is not None:
-                    if last_store not in self.dependency[node[1]]:
-                        self.dependency[node[1]].add(last_store)
-                        self.reverse[last_store].add(node[1])
+                load_val = VRToVal[vr1] if vr1 in VRToVal else None
+                for ls in list(reversed(last_store)):
+                    cur_vr3 = self.IR[ls - 1].ir[VR3]
+                    if load_val is not None and cur_vr3 in VRToVal and int(VRToVal[cur_vr3]) != int(load_val):
+                        continue
+                    if ls not in self.dependency[node[1]]:
+                        self.dependency[node[1]].add(ls)
+                        self.reverse[ls].add(node[1])
+                        break
 
-            # output serialization edge to most recent output
             if opcode == OUTPUT:
-                if last_output is not None:
-                    if last_output not in self.dependency[node[1]]:
-                        self.dependency[node[1]].add(last_output)
-                        self.reverse[last_output].add(node[1])
+                for lo in list(reversed(last_output)):
+                    if lo not in self.dependency[node[1]]:
+                        self.dependency[node[1]].add(lo)
+                        self.reverse[lo].add(node[1])
+                        break
 
             # store seialization edges to the most recent store and output, and all previous load
             if opcode == STORE:
                 store_val = VRToVal[vr3] if vr3 in VRToVal else None
-                if last_store is not None:
-                    if last_store not in self.dependency[node[1]]:
-                        self.dependency[node[1]].add(last_store)
-                        self.reverse[last_store].add(node[1])
 
-                if last_output is not None:
-                    if last_output not in self.dependency[node[1]]:
-                        self.dependency[node[1]].add(last_output)
-                        self.reverse[last_output].add(node[1])
+                if last_store:
+                    for ls in list(reversed(last_store)):
+                        cur_vr3 = self.IR[ls - 1].ir[VR3]
+                        if store_val is not None and cur_vr3 in VRToVal and int(VRToVal[cur_vr3]) != int(store_val):
+                            continue
+                        if ls not in self.dependency[node[1]]:
+                            self.dependency[node[1]].add(ls)
+                            self.reverse[ls].add(node[1])
+                            break
+
+                if last_output:
+                    for lo in list(reversed(last_output)):
+                        cur_val = self.IR[lo - 1].ir[R1]
+                        if store_val is not None and int(cur_val) != int(store_val):
+                            continue
+                        if lo not in self.dependency[node[1]]:
+                            self.dependency[node[1]].add(lo)
+                            self.reverse[lo].add(node[1])
+                            break
+                # if last_store is not None:
+                #     if last_store not in self.dependency[node[1]]:
+                #         self.dependency[node[1]].add(last_store)
+                #         self.reverse[last_store].add(node[1])
+                #
+                # if last_output is not None:
+                #     if last_output not in self.dependency[node[1]]:
+                #         self.dependency[node[1]].add(last_output)
+                #         self.reverse[last_output].add(node[1])
 
                 if all_loads:
                     for idx in all_loads:
@@ -154,17 +203,17 @@ class Scheduler:
                             self.dependency[node[1]].add(idx)
                             self.reverse[idx].add(node[1])
 
-            # if opcode == STORE:
-            #     last_store.append(i + 1)
-            #
-            # if opcode == OUTPUT:
-            #     last_output.append(i + 1)
-
             if opcode == STORE:
-                last_store = i + 1
+                last_store.append(i + 1)
 
             if opcode == OUTPUT:
-                last_output = i + 1
+                last_output.append(i + 1)
+
+            # if opcode == STORE:
+            #     last_store = i + 1
+            #
+            # if opcode == OUTPUT:
+            #     last_output = i + 1
 
             if opcode == LOAD:
                 all_loads.append(i + 1)
