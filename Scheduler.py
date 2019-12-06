@@ -38,11 +38,11 @@ class Scheduler:
         M = {}
         # pri_graph = defaultdict(set)
         VRToVal = {}
-        last_store = None
-        last_output = None
+        # last_store = None
+        # last_output = None
 
-        # last_store = []
-        # last_output = []
+        last_store = []
+        last_output = []
         all_loads = []
 
         for i in range(len(self.IR)):
@@ -115,29 +115,15 @@ class Scheduler:
             # find store before output and load
             if opcode == OUTPUT:
                 if last_store is not None:
-                    outval = ir[R1]
-                    opvr3 = self.IR[last_store - 1].ir[VR3]
-                    if opvr3 in VRToVal and int(VRToVal[opvr3]) != int(outval):
-                        # print(1)
-                        pass
-                    else:
-                        if last_store not in self.dependency[node[1]]:
-                            self.dependency[node[1]].add(last_store)
-                            self.reverse[last_store].add(node[1])
-                            # pri_graph[node[1]].add((last_store, False))
+                    if last_store not in self.dependency[node[1]]:
+                        self.dependency[node[1]].add(last_store)
+                        self.reverse[last_store].add(node[1])
 
             if opcode == LOAD:
                 if last_store is not None:
-                    loadval = VRToVal[vr1] if vr1 in VRToVal else None
-                    opvr3 = self.IR[last_store - 1].ir[VR3]
-                    if loadval is not None and opvr3 in VRToVal and int(VRToVal[opvr3]) != int(loadval):
-                        # print(1)
-                        pass
-                    else:
-                        if last_store not in self.dependency[node[1]]:
-                            self.dependency[node[1]].add(last_store)
-                            self.reverse[last_store].add(node[1])
-                            # pri_graph[node[1]].add((last_store, False))
+                    if last_store not in self.dependency[node[1]]:
+                        self.dependency[node[1]].add(last_store)
+                        self.reverse[last_store].add(node[1])
 
             # output serialization edge to most recent output
             if opcode == OUTPUT:
@@ -145,35 +131,39 @@ class Scheduler:
                     if last_output not in self.dependency[node[1]]:
                         self.dependency[node[1]].add(last_output)
                         self.reverse[last_output].add(node[1])
-                        # pri_graph[node[1]].add((last_output, True))
 
             # store seialization edges to the most recent store and output, and all previous load
             if opcode == STORE:
+                store_val = VRToVal[vr3] if vr3 in VRToVal else None
                 if last_store is not None:
                     if last_store not in self.dependency[node[1]]:
                         self.dependency[node[1]].add(last_store)
                         self.reverse[last_store].add(node[1])
-                        # pri_graph[node[1]].add((last_store, True))
 
                 if last_output is not None:
                     if last_output not in self.dependency[node[1]]:
                         self.dependency[node[1]].add(last_output)
                         self.reverse[last_output].add(node[1])
-                        # pri_graph[node[1]].add((last_output, True))
 
                 if all_loads:
                     for idx in all_loads:
+                        cur_vr1 = self.IR[idx - 1].ir[VR1]
+                        if store_val is not None and cur_vr1 in VRToVal and int(VRToVal[cur_vr1]) != int(store_val):
+                            continue
                         if idx not in self.dependency[node[1]]:
                             self.dependency[node[1]].add(idx)
                             self.reverse[idx].add(node[1])
-                            # pri_graph[node[1]].add((idx, True))
+
+            # if opcode == STORE:
+            #     last_store.append(i + 1)
+            #
+            # if opcode == OUTPUT:
+            #     last_output.append(i + 1)
 
             if opcode == STORE:
-                # last_store.append(i + 1)
                 last_store = i + 1
 
             if opcode == OUTPUT:
-                # last_output.append(i + 1)
                 last_output = i + 1
 
             if opcode == LOAD:
