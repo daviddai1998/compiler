@@ -17,6 +17,7 @@ class Scheduler:
         self.in_degree = defaultdict(int)
         self.reverse = defaultdict(set)
         self.priority = defaultdict(int)
+        self.second = defaultdict(int)
         self.ready = []
         self.active = []
         self.latency = {
@@ -161,11 +162,13 @@ class Scheduler:
         queue = deque([root])
         root_op = self.IR[root - 1].ir[OP]
         self.priority[root] = self.latency[root_op]
+        self.second[root] = 1
         while queue:
             node = queue.popleft()
             for nbr in self.dependency[node]:
                 opcode = self.IR[nbr - 1].ir[OP]
                 queue.append(nbr)
+                self.second[nbr] = max(self.second[nbr], self.second[nbr] + 1)
                 self.priority[nbr] = max(self.priority[nbr], self.priority[node] + self.latency[opcode])
         return
 
@@ -205,7 +208,7 @@ class Scheduler:
             if not self.dependency[k]:
                 opcode = self.IR[k - 1].ir[OP]
                 to_remove.append(k)
-                heapq.heappush(self.ready, (-self.priority[k], (k, opcode)))
+                heapq.heappush(self.ready, (-(1 * self.priority[k] + 1 * self.second[k]), (k, opcode)))
 
         for r in to_remove:
             self.dependency.pop(r)
@@ -256,7 +259,8 @@ class Scheduler:
                             # print(successor)
                             self.dependency.pop(successor)
                             s_opcode = self.IR[successor - 1].ir[OP]
-                            heapq.heappush(self.ready, (-self.priority[successor], (successor, s_opcode)))
+                            heapq.heappush(self.ready, (-(1 * self.priority[successor] + 1 * self.second[successor]),
+                                                        (successor, s_opcode)))
                     self.reverse.pop(op[0])
 
                 if (op[1] == LOAD or op[1] == STORE) and S[op[0]] == cycle - 1:
