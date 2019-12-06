@@ -39,6 +39,8 @@ class Scheduler:
         VRToVal = {}
         last_store = None
         last_output = None
+        # last_store = []
+        # last_output = []
         all_loads = []
 
         for i in range(len(self.IR)):
@@ -106,6 +108,8 @@ class Scheduler:
             # find store before output and load
             if opcode == OUTPUT:
                 if last_store is not None:
+                    outval = ir[R1]
+                    # if vr3 in VRToVal and
                     if last_store not in self.dependency[node[1]]:
                         self.dependency[node[1]].add(last_store)
                         self.reverse[last_store].add(node[1])
@@ -148,9 +152,11 @@ class Scheduler:
                             # pri_graph[node[1]].add((idx, True))
 
             if opcode == STORE:
+                # last_store.append(i + 1)
                 last_store = i + 1
 
             if opcode == OUTPUT:
+                # last_output.append(i + 1)
                 last_output = i + 1
 
             if opcode == LOAD:

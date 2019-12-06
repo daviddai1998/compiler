@@ -7,7 +7,8 @@
 //
 // Usage before scheduling: ./sim -s 3 -i 2000 1000 7 <  report09.i
 //
-//This block tests whether or not the scheduler can correctly identify that two registers contain values that are different offsets from the same memory value, and therefore must be different, so their stores and loads are independent of each other.
+//This block tests whether or not the scheduler can correctly identify that two registers contain values that are
+//different offsets from the same memory value, and therefore must be different, so their stores and loads are independent of each other.
 // comments assume value stored at 2000 is 1000, and at 2004 is 7, may be different
 loadI 2000 => r1 // r1: 2000
 load r1 => r2 // r2: 1000
