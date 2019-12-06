@@ -273,7 +273,7 @@ def renameReg(ir, maxSR, irLen):
                 lu[sr] = irLen
         if cur[R2] is not None:
             sr = cur[R2]
-            if not SRToVR[sr]:
+            if SRToVR[sr] is None:
                 SRToVR[sr] = VRname
                 VRname += 1
             cur[VR2] = SRToVR[sr]
@@ -281,7 +281,7 @@ def renameReg(ir, maxSR, irLen):
             lu[sr] = irLen
         if cur[R3] is not None and cur[OP] == STORE:
             sr = cur[R3]
-            if not SRToVR[sr]:
+            if SRToVR[sr] is None:
                 SRToVR[sr] = VRname
                 VRname += 1
             cur[VR3] = SRToVR[sr]

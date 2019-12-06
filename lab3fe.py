@@ -58,6 +58,20 @@ def schedule(filename):
     records, maxlive, maxVR = renameReg(ir.next, parser.maxSR + 1, parser.count - 1)
     records = list(reversed(records))
 
+    # for record in records:
+    #     curIR = record.ir
+    #     if curIR[0] == OUTPUT:
+    #         sys.stdout.write("%s %d\n" % (instructions[curIR[OP]], curIR[R1]))
+    #     elif curIR[0] == LOADI:
+    #         sys.stdout.write("%s %d => r%d\n" % (instructions[curIR[OP]], curIR[R1], curIR[VR3]))
+    #     elif curIR[0] == NOP:
+    #         sys.stdout.write("%s \n" % (instructions[curIR[OP]]))
+    #     elif curIR[0] == LOAD or curIR[0] == STORE:
+    #         sys.stdout.write("%s r%d => r%d\n" % (instructions[curIR[OP]], curIR[VR1], curIR[VR3]))
+    #     elif curIR[0] == LSHIFT or curIR[0] == RSHIFT \
+    #             or curIR[0] == ADD or curIR[0] == SUB or curIR[0] == MULT:
+    #         sys.stdout.write("%s r%d, r%d => r%d\n" % (instructions[curIR[OP]], curIR[VR1], curIR[VR2], curIR[VR3]))
+
     scheduler = Scheduler(records)
     scheduler.compute_priority()
     # print(scheduler.dependency)

@@ -81,12 +81,14 @@ class Scheduler:
             node = (ir, i + 1)
 
             if opcode not in {STORE, OUTPUT, NOP}:
+                # print(instructions[opcode], i, ir[VR3])
                 M[ir[VR3]] = node
 
             vr1 = ir[VR1]
             vr2 = ir[VR2]
             vr3 = ir[VR3]
             if vr1 is not None:
+                # print(vr1, node[1], instructions[opcode], M)
                 if M[vr1][1] not in self.dependency[node[1]]:
                     self.dependency[node[1]].add(M[vr1][1])
                     self.reverse[M[vr1][1]].add(node[1])
