@@ -32,6 +32,19 @@ class Scheduler:
             RSHIFT: 1,
             OUTPUT: 1
         }
+
+        self.delay = {
+            LOAD: 10,
+            STORE: 8,
+            MULT: 6,
+            LOADI: 1,
+            ADD: 1,
+            SUB: 1,
+            LSHIFT: 1,
+            RSHIFT: 1,
+            OUTPUT: 1
+        }
+
         self.build_dependency_graph()
 
     def build_dependency_graph(self):
@@ -175,7 +188,6 @@ class Scheduler:
                         if ls not in self.dependency[node[1]]:
                             self.dependency[node[1]].add(ls)
                             self.reverse[ls].add(node[1])
-                            # break
 
                 if last_output:
                     for lo in list(reversed(last_output)):
@@ -185,7 +197,6 @@ class Scheduler:
                         if lo not in self.dependency[node[1]]:
                             self.dependency[node[1]].add(lo)
                             self.reverse[lo].add(node[1])
-                            # break
                 # if last_store is not None:
                 #     if last_store not in self.dependency[node[1]]:
                 #         self.dependency[node[1]].add(last_store)
@@ -234,6 +245,9 @@ class Scheduler:
                 queue.append(nbr)
                 self.second[nbr] = max(self.second[nbr], self.second[nbr] + 1)
                 self.priority[nbr] = max(self.priority[nbr], self.priority[node] + self.latency[opcode])
+        for k in self.priority:
+            opcode = self.IR[k - 1].ir[OP]
+            self.priority[k] = 10 * self.priority[k] + 1 * self.second[k] + 5 * self.delay[opcode]
         return
 
     def isExist(self, f, num_out):
