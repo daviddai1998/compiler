@@ -240,11 +240,19 @@ class Scheduler:
         self.second[root] = 1
         while queue:
             node = queue.popleft()
+            node_op = self.IR[node - 1].ir[OP]
             for nbr in self.dependency[node]:
                 opcode = self.IR[nbr - 1].ir[OP]
                 queue.append(nbr)
                 self.second[nbr] = max(self.second[nbr], self.second[nbr] + 1)
-                self.priority[nbr] = max(self.priority[nbr], self.priority[node] + self.latency[opcode])
+                if self.is_serial[node][nbr]:
+                    self.priority[nbr] = max(self.priority[nbr], self.priority[node] + self.latency[opcode])
+                else:
+                    if (node_op == LOAD or node_op == OUTPUT) and opcode == STORE:
+                        self.priority[nbr] = max(self.priority[nbr], self.priority[node] + 5)
+                    else:
+                        self.priority[nbr] = max(self.priority[nbr], self.priority[node] + 1)
+                        
         for k in self.priority:
             opcode = self.IR[k - 1].ir[OP]
             self.priority[k] = 10 * self.priority[k] + 1 * self.second[k] + 5 * self.delay[opcode]
