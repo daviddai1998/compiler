@@ -13,6 +13,7 @@ class Operation:
 class Scheduler:
     def __init__(self, ir):
         self.IR = ir
+        self.is_serial = defaultdict(lambda: defaultdict(lambda: False))
         self.dependency = defaultdict(set)
         self.in_degree = defaultdict(int)
         self.reverse = defaultdict(set)
@@ -39,6 +40,7 @@ class Scheduler:
         VRToVal = {}
         last_store = None
         last_output = None
+
         # last_store = []
         # last_output = []
         all_loads = []
@@ -91,12 +93,14 @@ class Scheduler:
                 # print(vr1, node[1], instructions[opcode], M)
                 if M[vr1][1] not in self.dependency[node[1]]:
                     self.dependency[node[1]].add(M[vr1][1])
+                    self.is_serial[node[1]][M[vr1][1]] = True
                     self.reverse[M[vr1][1]].add(node[1])
                     # pri_graph[node[1]].add((M[vr1][1], False))
 
             if vr2 is not None:
                 if M[vr2][1] not in self.dependency[node[1]]:
                     self.dependency[node[1]].add(M[vr2][1])
+                    self.is_serial[node[1]][M[vr2][1]] = True
                     self.reverse[M[vr2][1]].add(node[1])
                     # pri_graph[node[1]].add((M[vr2][1], False))
 
@@ -104,6 +108,7 @@ class Scheduler:
                 if vr3 is not None:
                     if M[vr3][1] not in self.dependency[node[1]]:
                         self.dependency[node[1]].add(M[vr3][1])
+                        self.is_serial[node[1]][M[vr3][1]] = True
                         self.reverse[M[vr3][1]].add(node[1])
                         # pri_graph[node[1]].add((M[vr3][1], False))
 
@@ -279,7 +284,7 @@ class Scheduler:
                         # print(self.dependency[successor])
                         s_opcode = self.IR[successor - 1].ir[OP]
                         if s_opcode == STORE and op[0] in self.dependency[successor] \
-                                and len(self.dependency[successor]) == 1:
+                                and len(self.dependency[successor]) == 1 and not self.is_serial[successor][op[0]]:
                             self.dependency[successor].remove(op[0])
                             self.dependency.pop(successor)
                             heapq.heappush(self.ready, (-self.priority[successor], (successor, s_opcode)))
