@@ -137,7 +137,7 @@ class Scanner:
             # if word has some characters
             char = self.word[-1]
 
-        if char == ' ':
+        if char == ' ' or char == '\t':
             self.word = ""
             token = self.next_token()
             return token
