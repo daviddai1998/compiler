@@ -140,9 +140,9 @@ class Scheduler:
                         continue
                     if ls not in self.dependency[node[1]]:
                         self.dependency[node[1]].add(ls)
-                        self.is_serial[node[1]][ls] = True
+                        # self.is_serial[node[1]][ls] = True
                         self.reverse[ls].add(node[1])
-                        break
+                        # break
 
             if opcode == LOAD:
                 load_val = VRToVal[vr1] if vr1 in VRToVal else None
@@ -152,16 +152,16 @@ class Scheduler:
                         continue
                     if ls not in self.dependency[node[1]]:
                         self.dependency[node[1]].add(ls)
-                        self.is_serial[node[1]][ls] = True
+                        # self.is_serial[node[1]][ls] = True
                         self.reverse[ls].add(node[1])
-                        break
+                        # break
 
             if opcode == OUTPUT:
                 for lo in list(reversed(last_output)):
                     if lo not in self.dependency[node[1]]:
                         self.dependency[node[1]].add(lo)
                         self.reverse[lo].add(node[1])
-                        break
+                        # break
 
             # store seialization edges to the most recent store and output, and all previous load
             if opcode == STORE:
@@ -175,7 +175,7 @@ class Scheduler:
                         if ls not in self.dependency[node[1]]:
                             self.dependency[node[1]].add(ls)
                             self.reverse[ls].add(node[1])
-                            break
+                            # break
 
                 if last_output:
                     for lo in list(reversed(last_output)):
@@ -185,7 +185,7 @@ class Scheduler:
                         if lo not in self.dependency[node[1]]:
                             self.dependency[node[1]].add(lo)
                             self.reverse[lo].add(node[1])
-                            break
+                            # break
                 # if last_store is not None:
                 #     if last_store not in self.dependency[node[1]]:
                 #         self.dependency[node[1]].add(last_store)
