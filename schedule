@@ -1,2 +1,2 @@
 #!bin/bash
-python ~/lab3fe.py $@
+python ~/compiler/lab3fe.py $@
