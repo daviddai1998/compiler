@@ -140,6 +140,7 @@ class Scheduler:
                         continue
                     if ls not in self.dependency[node[1]]:
                         self.dependency[node[1]].add(ls)
+                        self.is_serial[node[1]][ls] = True
                         self.reverse[ls].add(node[1])
                         break
 
@@ -151,6 +152,7 @@ class Scheduler:
                         continue
                     if ls not in self.dependency[node[1]]:
                         self.dependency[node[1]].add(ls)
+                        self.is_serial[node[1]][ls] = True
                         self.reverse[ls].add(node[1])
                         break
 
