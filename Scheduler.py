@@ -38,11 +38,11 @@ class Scheduler:
         M = {}
         # pri_graph = defaultdict(set)
         VRToVal = {}
-        # last_store = None
-        # last_output = None
+        last_store = None
+        last_output = None
 
-        last_store = []
-        last_output = []
+        # last_store = []
+        # last_output = []
         all_loads = []
 
         for i in range(len(self.IR)):
