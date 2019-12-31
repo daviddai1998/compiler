@@ -252,7 +252,7 @@ class Scheduler:
                         self.priority[nbr] = max(self.priority[nbr], self.priority[node] + 5)
                     else:
                         self.priority[nbr] = max(self.priority[nbr], self.priority[node] + 1)
-                        
+
         for k in self.priority:
             opcode = self.IR[k - 1].ir[OP]
             self.priority[k] = 10 * self.priority[k] + 1 * self.second[k] + 5 * self.delay[opcode]
