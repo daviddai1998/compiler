@@ -1,0 +1,14 @@
+//NAME: David Dai
+//NETID: wd16
+
+COMP412 Lab3
+
+Usage:
+Command Syntax:
+	./schedule [flags] filename
+
+Required arguments:
+	filename is the pathname (absolute or relative) to the input file
+
+flags:
+	-h	 prints this message

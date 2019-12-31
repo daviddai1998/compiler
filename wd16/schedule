@@ -1,0 +1,2 @@
+#!/bin/bash
+python lab3fe.py $@
